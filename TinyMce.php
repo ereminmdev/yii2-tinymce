@@ -10,6 +10,7 @@ use yii\helpers\Url;
 use yii\web\JsExpression;
 use yii\widgets\InputWidget;
 
+
 /**
  * TinyMce widget for Yii framework.
  */
@@ -28,6 +29,10 @@ class TinyMce extends InputWidget
      * @var bool use compact editor mode
      */
     public $compactMode = false;
+    /**
+     * @var bool show or hide powered by block
+     */
+    public $poweredBy = false;
 
 
     /**
@@ -37,10 +42,7 @@ class TinyMce extends InputWidget
     {
         parent::init();
 
-        $this->options = ArrayHelper::merge(
-            $this->options,
-            ['rows' => 6]
-        );
+        $this->options = ArrayHelper::merge($this->options, ['rows' => 6]);
 
         $this->language = ($this->language !== null) ? $this->language : ((!in_array(Yii::$app->language, ['en', 'en-US'])) ? Yii::$app->language : null);
 
@@ -136,30 +138,32 @@ class TinyMce extends InputWidget
     protected function registerClientScripts()
     {
         $view = $this->getView();
+
         $assetBundle = TinyMceAsset::register($view);
 
         $id = $this->options['id'];
-
         $this->clientOptions['selector'] = '#' . $id;
         if ($this->language !== null) {
             $this->clientOptions['language_url'] = $assetBundle->baseUrl . '/langs/' . $this->language . '.js';
         }
-
         $view->registerJs('tinymce.init(' . Json::encode($this->clientOptions) . ');');
 
+        if (!$this->poweredBy) {
+            $view->registerCss('.mce-branding-powered-by { display: none; }');
+        }
 
         // Register ElFinder popup window
-        $view->registerJs("
+        $view->registerJs('
 function elFinderBrowser(callback, value, meta) {
     tinymce.activeEditor.windowManager.open({
-        file: '" . Url::toRoute(['/files/popup'], true) . "',
-        title: '" . Yii::t('app', 'Files') . "',
+        file: "' . Url::toRoute(["/files/popup"], true) . '",
+        title: "' . Yii::t("app", "Files") . '",
         width: 900,
         height: 450,
-        resizable: 'yes',
-        inline : 'yes',
+        resizable: "yes",
+        inline : "yes",
         popup_css : false,
-        close_previous : 'no'
+        close_previous : "no"
     }, {
         oninsert: function (file) {
             var url, reg, info;
@@ -168,30 +172,30 @@ function elFinderBrowser(callback, value, meta) {
             url = file.url;
             reg = /\\/[^/]+?\\/\\.\\.\\//;
             while(url.match(reg)) {
-                url = url.replace(reg, '/');
+                url = url.replace(reg, "/");
             }
 
             // Make file info
             info = file.name;
 
             // Provide file and text for the link dialog
-            if (meta.filetype == 'file') {
+            if (meta.filetype == "file") {
                 callback(url, {text: info, title: info});
             }
 
             // Provide image and alt text for the image dialog
-            if (meta.filetype == 'image') {
+            if (meta.filetype == "image") {
                 callback(url, {alt: info});
             }
 
             // Provide alternative source and posted for the media dialog
-            if (meta.filetype == 'media') {
+            if (meta.filetype == "media") {
                 callback(url);
             }
         }
     });
     return false;
 }
-        ");
+        ');
     }
 }
