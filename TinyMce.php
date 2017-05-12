@@ -17,18 +17,22 @@ use yii\widgets\InputWidget;
 class TinyMce extends InputWidget
 {
     /**
-     * @var string the language to use
-     */
-    public $language;
-    /**
      * @var array the options for the TinyMCE JS plugin.
      * Please refer to the TinyMCE JS plugin web page for possible options: https://www.tinymce.com/docs/configure/
      */
     public $clientOptions = [];
     /**
-     * @var bool use compact editor mode
+     * @var string one of the none, compact, full, subscribe
      */
-    public $compactMode = false;
+    public $mode = 'full';
+    /**
+     * @var string the language to use
+     */
+    public $language;
+    /**
+     * @var bool
+     */
+    public $useElFinder = true;
 
 
     /**
@@ -42,21 +46,18 @@ class TinyMce extends InputWidget
 
         $this->language = ($this->language !== null) ? $this->language : ((!in_array(Yii::$app->language, ['en', 'en-US'])) ? Yii::$app->language : null);
 
-        $basePath = Yii::$app->get('urlManagerFrontend')->getBaseUrl();
+        $basePath = Yii::$app->has('urlManagerFrontend') ? Yii::$app->urlManagerFrontend->baseUrl : Yii::$app->urlManager->baseUrl;
 
         $assetBundle = TinyMceAsset::register($this->getView());
-        $templatesPath = $assetBundle->baseUrl . '/templates';
+        $templatePath = $assetBundle->baseUrl . '/templates';
 
-        $defaultsBase = [
+        $baseOptions = [
             'content_css' => $basePath . '/css/site-editor.css',
             'document_base_url' => Url::to('/', true),
             'valid_elements' => '*[*]',
             'convert_urls' => false,
             'browser_spellcheck' => true,
             'branding' => false,
-        ];
-
-        $defaults = !$this->compactMode ? ArrayHelper::merge($defaultsBase, [
             'height' => 350,
             'fontsize_formats' => '8px 9px 10px 11px 12px 14px 18px 24px 30px 36px 48px 60px 72px 96px',
             'setup' => new JsExpression('function(editor){ editor.on("change", function(){ tinymce.triggerSave(); }); }'),
@@ -68,52 +69,73 @@ class TinyMce extends InputWidget
             ],
             'toolbar' => 'fullscreen | insertfile undo redo | styleselect | fontselect | fontsizeselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor',
             'image_advtab' => true,
-            'file_picker_callback' => new JsExpression('elFinderBrowser'),
-            'templates' => [
-                ['title' => 'Заголовок первого уровня', 'url' => $templatesPath . '/head1.htm'],
+        ];
 
-                ['title' => 'Таблица', 'url' => $templatesPath . '/table1.htm'],
-                ['title' => 'Таблица c чередование строк', 'url' => $templatesPath . '/table2.htm'],
-                ['title' => 'Таблица c рамками', 'url' => $templatesPath . '/table3.htm'],
-                ['title' => 'Таблица компактная', 'url' => $templatesPath . '/table4.htm'],
-
-                ['title' => 'Фото или видео по центру', 'url' => $templatesPath . '/tpl1.htm'],
-                ['title' => '2 колонки с заголовком первого уровня', 'url' => $templatesPath . '/tpl2.htm'],
-                ['title' => '3 колонки с заголовком первого уровня', 'url' => $templatesPath . '/tpl3.htm'],
-                ['title' => '4 колонки с заголовком первого уровня', 'url' => $templatesPath . '/tpl4.htm'],
-                ['title' => 'Фото с текстом справа', 'url' => $templatesPath . '/tpl5.htm'],
-                ['title' => 'Фото с текстом слева', 'url' => $templatesPath . '/tpl6.htm'],
-                ['title' => '2 колонки с горизонтальными блоками', 'url' => $templatesPath . '/tpl7.htm'],
-
-                ['title' => 'Текст 2 колонки', 'url' => $templatesPath . '/text2col.htm'],
-                ['title' => 'Текст 3 колонки', 'url' => $templatesPath . '/text3col.htm'],
-                ['title' => 'Текст 4 колонки', 'url' => $templatesPath . '/text4col.htm'],
-                ['title' => 'Подкат', 'url' => $templatesPath . '/tackle.htm'],
-
-                ['title' => 'Кнопка 1', 'content' => '<a class="btn btn-default" href="#" role="button">Подробнее &raquo;</a>'],
-                ['title' => 'Кнопка 2', 'content' => '<a class="btn btn-primary" href="#" role="button">Подробнее &raquo;</a>'],
-                ['title' => 'Кнопка 3', 'content' => '<a class="btn btn-success" href="#" role="button">Подробнее &raquo;</a>'],
-                ['title' => 'Кнопка 4', 'content' => '<a class="btn btn-info" href="#" role="button">Подробнее &raquo;</a>'],
-                ['title' => 'Кнопка 5', 'content' => '<a class="btn btn-warning" href="#" role="button">Подробнее &raquo;</a>'],
-                ['title' => 'Кнопка 6', 'content' => '<a class="btn btn-danger" href="#" role="button">Подробнее &raquo;</a>'],
-                ['title' => 'Кнопка 7', 'content' => '<a class="btn btn-link" href="#" role="button">Подробнее &raquo;</a>'],
-            ],
-        ]) : ArrayHelper::merge($defaultsBase, [
-            'height' => 100,
-            'toolbar' => false,
-            'menubar' => false,
-            'statusbar' => false,
-            'contextmenu' => false,
-            'resize' => true,
-            'plugins' => ['paste'],
-            'paste_as_text' => true,
-        ]);
-
-        if ($this->compactMode) {
-            $this->options['class'] = '';
+        if ($this->useElFinder) {
+            $baseOptions['file_picker_callback'] = new JsExpression('elFinderBrowser');
         }
 
-        $this->clientOptions = ArrayHelper::merge($defaults, $this->clientOptions);
+        if ($this->mode == 'none') {
+            $clientOptions = [];
+
+        } elseif ($this->mode == 'compact') {
+            $clientOptions = ArrayHelper::merge($baseOptions, [
+                'height' => 100,
+                'toolbar' => false,
+                'menubar' => false,
+                'statusbar' => false,
+                'contextmenu' => false,
+                'resize' => true,
+                'plugins' => ['paste'],
+                'paste_as_text' => true,
+            ]);
+
+            $this->options['class'] = '';
+
+        } elseif ($this->mode == 'subscribe') {
+            $clientOptions = ArrayHelper::merge($baseOptions, [
+                'schema' => 'html4',
+                'doctype' => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">',
+                'content_css' => '',
+                'relative_urls' => false,
+                'remove_script_host' => false,
+            ]);
+
+        } else {
+            $clientOptions = ArrayHelper::merge($baseOptions, [
+                'templates' => [
+                    ['title' => 'Заголовок первого уровня', 'url' => $templatePath . '/head1.htm'],
+
+                    ['title' => 'Таблица', 'url' => $templatePath . '/table1.htm'],
+                    ['title' => 'Таблица c чередование строк', 'url' => $templatePath . '/table2.htm'],
+                    ['title' => 'Таблица c рамками', 'url' => $templatePath . '/table3.htm'],
+                    ['title' => 'Таблица компактная', 'url' => $templatePath . '/table4.htm'],
+
+                    ['title' => 'Фото или видео по центру', 'url' => $templatePath . '/tpl1.htm'],
+                    ['title' => '2 колонки с заголовком первого уровня', 'url' => $templatePath . '/tpl2.htm'],
+                    ['title' => '3 колонки с заголовком первого уровня', 'url' => $templatePath . '/tpl3.htm'],
+                    ['title' => '4 колонки с заголовком первого уровня', 'url' => $templatePath . '/tpl4.htm'],
+                    ['title' => 'Фото с текстом справа', 'url' => $templatePath . '/tpl5.htm'],
+                    ['title' => 'Фото с текстом слева', 'url' => $templatePath . '/tpl6.htm'],
+                    ['title' => '2 колонки с горизонтальными блоками', 'url' => $templatePath . '/tpl7.htm'],
+
+                    ['title' => 'Текст 2 колонки', 'url' => $templatePath . '/text2col.htm'],
+                    ['title' => 'Текст 3 колонки', 'url' => $templatePath . '/text3col.htm'],
+                    ['title' => 'Текст 4 колонки', 'url' => $templatePath . '/text4col.htm'],
+                    ['title' => 'Подкат', 'url' => $templatePath . '/tackle.htm'],
+
+                    ['title' => 'Кнопка 1', 'content' => '<a class="btn btn-default" href="#" role="button">Подробнее &raquo;</a>'],
+                    ['title' => 'Кнопка 2', 'content' => '<a class="btn btn-primary" href="#" role="button">Подробнее &raquo;</a>'],
+                    ['title' => 'Кнопка 3', 'content' => '<a class="btn btn-success" href="#" role="button">Подробнее &raquo;</a>'],
+                    ['title' => 'Кнопка 4', 'content' => '<a class="btn btn-info" href="#" role="button">Подробнее &raquo;</a>'],
+                    ['title' => 'Кнопка 5', 'content' => '<a class="btn btn-warning" href="#" role="button">Подробнее &raquo;</a>'],
+                    ['title' => 'Кнопка 6', 'content' => '<a class="btn btn-danger" href="#" role="button">Подробнее &raquo;</a>'],
+                    ['title' => 'Кнопка 7', 'content' => '<a class="btn btn-link" href="#" role="button">Подробнее &raquo;</a>'],
+                ],
+            ]);
+        }
+
+        $this->clientOptions = ArrayHelper::merge($clientOptions, $this->clientOptions);
     }
 
     /**
@@ -145,8 +167,8 @@ class TinyMce extends InputWidget
         }
         $view->registerJs('tinymce.init(' . Json::encode($this->clientOptions) . ');');
 
-        // Register ElFinder popup window
-        $view->registerJs('
+        if ($this->useElFinder) {
+            $view->registerJs('
 function elFinderBrowser(callback, value, meta) {
     tinymce.activeEditor.windowManager.open({
         file: "' . Url::toRoute(["/files/popup"], true) . '",
@@ -189,6 +211,7 @@ function elFinderBrowser(callback, value, meta) {
     });
     return false;
 }
-        ');
+');
+        }
     }
 }
