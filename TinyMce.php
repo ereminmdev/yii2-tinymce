@@ -29,10 +29,6 @@ class TinyMce extends InputWidget
      * @var bool use compact editor mode
      */
     public $compactMode = false;
-    /**
-     * @var bool show or hide powered by block
-     */
-    public $poweredBy = false;
 
 
     /**
@@ -57,6 +53,7 @@ class TinyMce extends InputWidget
             'valid_elements' => '*[*]',
             'convert_urls' => false,
             'browser_spellcheck' => true,
+            'branding' => false,
         ];
 
         $defaults = !$this->compactMode ? ArrayHelper::merge($defaultsBase, [
@@ -147,10 +144,6 @@ class TinyMce extends InputWidget
             $this->clientOptions['language_url'] = $assetBundle->baseUrl . '/langs/' . $this->language . '.js';
         }
         $view->registerJs('tinymce.init(' . Json::encode($this->clientOptions) . ');');
-
-        if (!$this->poweredBy) {
-            $view->registerCss('.mce-branding-powered-by { display: none; }');
-        }
 
         // Register ElFinder popup window
         $view->registerJs('
