@@ -167,6 +167,12 @@ class TinyMce extends InputWidget
         }
         $view->registerJs('tinymce.init(' . Json::encode($this->clientOptions) . ');');
 
+        $view->registerCss('
+div.mce-fullscreen {
+    z-index: 1100;
+}
+        ');
+
         if ($this->useElFinder) {
             $view->registerJs('
 function elFinderBrowser(callback, value, meta) {
