@@ -3,6 +3,7 @@
   "description": "TinyMce widget for Yii framework.",
   "keywords": ["yii2","inputWidget","tinymce"],
   "homepage": "https://bitbucket.org/ereminmdev/yii2-tinymce",
+  "type": "yii2-extension",
   "license": "MIT",
   "authors": [
     {
