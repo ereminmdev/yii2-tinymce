@@ -97,6 +97,7 @@ class TinyMce extends InputWidget
                 'schema' => 'html4',
                 'doctype' => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">',
                 'content_css' => '',
+                'convert_urls' => true,
                 'relative_urls' => false,
                 'remove_script_host' => false,
             ]);
