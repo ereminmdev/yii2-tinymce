@@ -10,7 +10,6 @@ use yii\helpers\Url;
 use yii\web\JsExpression;
 use yii\widgets\InputWidget;
 
-
 /**
  * TinyMce widget for Yii framework.
  */
@@ -53,7 +52,7 @@ class TinyMce extends InputWidget
 
         $baseOptions = [
             'content_css' => $basePath . '/css/site-editor.css',
-            'document_base_url' => Url::to('/', true),
+            'document_base_url' => Url::to('/'),
             'valid_elements' => '*[*]',
             'convert_urls' => false,
             'browser_spellcheck' => true,
@@ -178,8 +177,8 @@ div.mce-fullscreen {
             $view->registerJs('
 function elFinderBrowser(callback, value, meta) {
     tinymce.activeEditor.windowManager.open({
-        file: "' . Url::toRoute(["/files/popup"], true) . '",
-        title: "' . Yii::t("app", "Files") . '",
+        file: "' . Url::toRoute(['/files/popup']) . '",
+        title: "' . Yii::t('app', 'Files') . '",
         width: 900,
         height: 450,
         resizable: "yes",
