@@ -33,9 +33,9 @@ class TinyMce extends InputWidget
      */
     public $useElFinder = true;
 
-
     /**
      * @inheritdoc
+     * @throws \yii\base\InvalidConfigException
      */
     public function init()
     {
@@ -45,17 +45,18 @@ class TinyMce extends InputWidget
 
         $this->language = ($this->language !== null) ? $this->language : ((!in_array(Yii::$app->language, ['en', 'en-US'])) ? Yii::$app->language : null);
 
-        $basePath = Yii::$app->has('urlManagerFrontend') ? Yii::$app->urlManagerFrontend->baseUrl : Yii::$app->urlManager->baseUrl;
-
         $assetBundle = TinyMceAsset::register($this->getView());
         $templatePath = $assetBundle->baseUrl . '/templates';
 
         $baseOptions = [
-            'content_css' => $basePath . '/css/site-editor.css',
+            'content_css' => Yii::getAlias('@frontend/web/css/site-editor.css'),
             'document_base_url' => Url::to('/'),
             'valid_elements' => '*[*]',
             'convert_urls' => false,
             'browser_spellcheck' => true,
+            'images_upload_url' => Url::toRoute(['/files/tinymce-upload']),
+            'images_upload_credentials' => true,
+            'automatic_uploads' => true,
             'branding' => false,
             'height' => 350,
             'fontsize_formats' => '8px 9px 10px 11px 12px 14px 18px 24px 30px 36px 48px 60px 72px 96px',
