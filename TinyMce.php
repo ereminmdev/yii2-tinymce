@@ -45,16 +45,18 @@ class TinyMce extends InputWidget
 
         $this->language = ($this->language !== null) ? $this->language : ((!in_array(Yii::$app->language, ['en', 'en-US'])) ? Yii::$app->language : null);
 
+        $baseUrl = Yii::$app->has('urlManagerFrontend') ? Yii::$app->urlManagerFrontend->baseUrl : Yii::$app->urlManager->baseUrl;
+
         $assetBundle = TinyMceAsset::register($this->getView());
         $templatePath = $assetBundle->baseUrl . '/templates';
 
         $baseOptions = [
-            'content_css' => Yii::getAlias('@frontend/web/css/site-editor.css'),
-            'document_base_url' => Url::to('/'),
+            'content_css' => $baseUrl . '/css/site-editor.css',
+            'document_base_url' => $baseUrl . '/',
             'valid_elements' => '*[*]',
             'convert_urls' => false,
             'browser_spellcheck' => true,
-            'images_upload_url' => Url::toRoute(['/files/tinymce-upload']),
+            'images_upload_url' => $baseUrl . '/files/tinymce-upload',
             'images_upload_credentials' => true,
             'automatic_uploads' => true,
             'branding' => false,
