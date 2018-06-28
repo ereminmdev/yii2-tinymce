@@ -43,7 +43,8 @@ class TinyMce extends InputWidget
 
         $this->options = ArrayHelper::merge($this->options, ['rows' => 6]);
 
-        $this->language = ($this->language !== null) ? $this->language : ((!in_array(Yii::$app->language, ['en', 'en-US'])) ? Yii::$app->language : null);
+        $this->language = $this->language ?? mb_substr(Yii::$app->language, 0, 2);
+        $this->language = $this->language != 'en' ? $this->language : null;
 
         $baseUrl = Yii::$app->has('urlManagerFrontend') ? Yii::$app->urlManagerFrontend->baseUrl : Yii::$app->urlManager->baseUrl;
 
