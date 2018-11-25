@@ -57,7 +57,7 @@ class TinyMce extends InputWidget
             'valid_elements' => '*[*]',
             'convert_urls' => false,
             'browser_spellcheck' => true,
-            'images_upload_url' => $baseUrl . '/files/tinymce-upload',
+            'images_upload_url' => Url::toRoute(['/files/tinymce-upload'], true),
             'images_upload_credentials' => true,
             'automatic_uploads' => true,
             'branding' => false,
