@@ -26,6 +26,10 @@ class ImageUploadAction extends Action
      * @var string
      */
     public $basePath = '@webroot';
+    /**
+     * @var bool
+     */
+    public $useSubFolder = true;
 
     /**
      * @inheritdoc
@@ -49,9 +53,14 @@ class ImageUploadAction extends Action
                 }
 
                 $filename = uniqid() . time() . '.' . $extension;
+                $uploadFolder = $this->uploadFolder;
 
-                $baseUrl = Yii::getAlias($this->baseUrl) . '/' . $this->uploadFolder;
-                $basePath = Yii::getAlias($this->basePath) . DIRECTORY_SEPARATOR . $this->uploadFolder;
+                if ($this->useSubFolder) {
+                    $uploadFolder .= '/' . mb_substr($filename, 0, 2);
+                }
+
+                $baseUrl = Yii::getAlias($this->baseUrl) . '/' . $uploadFolder;
+                $basePath = Yii::getAlias($this->basePath) . DIRECTORY_SEPARATOR . $uploadFolder;
 
                 // Accept upload if there was no origin, or if it is an accepted origin
                 $filepath = $basePath . DIRECTORY_SEPARATOR . $filename;

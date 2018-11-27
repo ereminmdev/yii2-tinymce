@@ -60,6 +60,7 @@ class TinyMce extends InputWidget
             'images_upload_url' => Url::toRoute(['/files/tinymce-upload'], true),
             'images_upload_credentials' => true,
             'automatic_uploads' => true,
+            'paste_data_images' => true,
             'branding' => false,
             'height' => 350,
             'fontsize_formats' => '8px 9px 10px 11px 12px 14px 18px 24px 30px 36px 48px 60px 72px 96px',
