@@ -3,6 +3,7 @@
 namespace ereminmdev\yii2\tinymce;
 
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Json;
@@ -35,7 +36,7 @@ class TinyMce extends InputWidget
 
     /**
      * @inheritdoc
-     * @throws \yii\base\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public function init()
     {
@@ -64,14 +65,22 @@ class TinyMce extends InputWidget
             'branding' => false,
             'height' => 350,
             'fontsize_formats' => '8px 9px 10px 11px 12px 14px 18px 24px 30px 36px 48px 60px 72px 96px',
-            'setup' => new JsExpression('function(editor){ editor.on("change", function(){ tinymce.triggerSave(); }); }'),
+            'setup' => new JsExpression('function(editor){ 
+editor.on("change", function(){ tinymce.triggerSave(); });
+
+editor.addButton("emoji", {
+    icon: "emoticons",
+    tooltip: "Emoji",
+    onclick: function() { window.open("//emojio.ru", "_blank"); }
+});
+}'),
             'plugins' => [
                 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
                 'searchreplace wordcount visualblocks visualchars code fullscreen',
                 'insertdatetime media nonbreaking save table contextmenu directionality',
                 'template paste textcolor colorpicker textpattern'
             ],
-            'toolbar' => 'fullscreen | insertfile undo redo | styleselect | fontselect | fontsizeselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor',
+            'toolbar' => 'fullscreen | insertfile undo redo | styleselect | fontselect | fontsizeselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor | emoji',
             'image_advtab' => true,
         ];
 
