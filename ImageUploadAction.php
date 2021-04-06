@@ -32,7 +32,7 @@ class ImageUploadAction extends Action
     public $useSubFolder = true;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      * @throws BadRequestHttpException
      * @throws ServerErrorHttpException
      */

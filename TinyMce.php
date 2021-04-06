@@ -35,7 +35,7 @@ class TinyMce extends InputWidget
     public $useElFinder = true;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      * @throws InvalidConfigException
      */
     public function init()
@@ -153,7 +153,7 @@ editor.addButton("emoji", {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function run()
     {
