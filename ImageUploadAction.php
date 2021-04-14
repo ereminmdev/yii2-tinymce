@@ -44,7 +44,8 @@ class ImageUploadAction extends Action
             $tmp_name = $uploadFile['tmp_name'];
 
             if (is_uploaded_file($tmp_name)) {
-                $filename = basename($uploadFile['name']);
+                $filename = $uploadFile['name'];
+                $filename = ($pos = mb_strrpos($filename, '/')) !== false ? mb_substr($filename, $pos + 1) : $filename;
                 $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
                 // Verify extension
