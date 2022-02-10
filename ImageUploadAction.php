@@ -49,7 +49,7 @@ class ImageUploadAction extends Action
                 $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
                 // Verify extension
-                if (!in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                if (!in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'])) {
                     throw new BadRequestHttpException('Invalid extension.');
                 }
 
