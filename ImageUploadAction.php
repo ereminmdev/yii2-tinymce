@@ -30,6 +30,10 @@ class ImageUploadAction extends Action
      * @var bool
      */
     public $useSubFolder = true;
+    /**
+     * @var bool
+     */
+    public $convertToWebP = false;
 
     /**
      * {@inheritdoc}
@@ -48,7 +52,6 @@ class ImageUploadAction extends Action
                 $filename = ($pos = mb_strrpos($filename, '/')) !== false ? mb_substr($filename, $pos + 1) : $filename;
                 $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
-                // Verify extension
                 if (!in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'])) {
                     throw new BadRequestHttpException('Invalid extension.');
                 }
@@ -66,7 +69,19 @@ class ImageUploadAction extends Action
                 // Accept upload if there was no origin, or if it is an accepted origin
                 $filepath = $basePath . DIRECTORY_SEPARATOR . $filename;
                 @mkdir(dirname($filepath), 0777, true);
-                move_uploaded_file($tmp_name, $filepath);
+
+                if ($this->convertToWebP && in_array($extension, ['jpg', 'jpeg', 'png'])) {
+                    $im = in_array($extension, ['jpg', 'jpeg']) ? @imagecreatefromjpeg($tmp_name) : @imagecreatefrompng($tmp_name);
+
+                    if ($im) {
+                        $filename = preg_replace('/' . $extension . '$/', 'webp', $filename);
+                        $filepath = preg_replace('/' . $extension . '$/', 'webp', $filepath);
+                        imagewebp($im, $filepath);
+                        imagedestroy($im);
+                    }
+                } else {
+                    move_uploaded_file($tmp_name, $filepath);
+                }
 
                 // Respond to the successful upload with JSON.
                 // Use a location key to specify the path to the saved image resource.

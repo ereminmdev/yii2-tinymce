@@ -6,7 +6,7 @@ This widget depend on TinyMCE WYSIWYG editor: https://www.tinymce.com/
 
 ## Install
 
-``composer require ereminmdev/yii2-tinymce``
+``composer require --prefer-dist ereminmdev/yii2-tinymce``
 
 ## Use
 
