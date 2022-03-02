@@ -31,9 +31,13 @@ class ImageUploadAction extends Action
      */
     public $useSubFolder = true;
     /**
-     * @var bool
+     * @var bool convert uploaded images to WebP format
      */
-    public $convertToWebP = false;
+    public $convertToWebP = true;
+    /**
+     * @var int quality ranges from 0 (worst quality, smaller file) to 100 (best quality, biggest file)
+     */
+    public $convertQuality = 80;
 
     /**
      * {@inheritdoc}
@@ -76,7 +80,7 @@ class ImageUploadAction extends Action
                     if ($im) {
                         $filename = preg_replace('/' . $extension . '$/', 'webp', $filename);
                         $filepath = preg_replace('/' . $extension . '$/', 'webp', $filepath);
-                        imagewebp($im, $filepath);
+                        imagewebp($im, $filepath, $this->convertQuality);
                         imagedestroy($im);
                     }
                 } else {
