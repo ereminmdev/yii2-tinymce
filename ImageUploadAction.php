@@ -80,6 +80,7 @@ class ImageUploadAction extends Action
                     if ($im) {
                         $filename = preg_replace('/' . $extension . '$/', 'webp', $filename);
                         $filepath = preg_replace('/' . $extension . '$/', 'webp', $filepath);
+                        imagepalettetotruecolor($im);
                         imagewebp($im, $filepath, $this->convertQuality);
                         imagedestroy($im);
                     }
