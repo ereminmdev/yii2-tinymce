@@ -22,7 +22,7 @@ class TinyMce extends InputWidget
      */
     public $clientOptions = [];
     /**
-     * @var string one of the none, compact, full, subscribe
+     * @var string one of the none, compact, basic, full, subscribe
      */
     public $mode = 'full';
     /**
@@ -67,7 +67,6 @@ class TinyMce extends InputWidget
             'fontsize_formats' => '8px 9px 10px 11px 12px 14px 18px 24px 30px 36px 48px 60px 72px 96px',
             'setup' => new JsExpression('function(editor){ 
 editor.on("change", function(){ tinymce.triggerSave(); });
-
 editor.addButton("emoji", {
     icon: "emoticons",
     tooltip: "Emoji",
@@ -102,8 +101,16 @@ editor.addButton("emoji", {
                 'plugins' => ['paste'],
                 'paste_as_text' => true,
             ]);
-
             $this->options['class'] = '';
+
+        } elseif ($this->mode == 'basic') {
+            $clientOptions = ArrayHelper::merge($baseOptions, [
+                'toolbar' => 'fullscreen | insertfile undo redo | fontsizeselect | bold italic | bullist numlist | forecolor backcolor | emoji',
+                'statusbar' => false,
+                'plugins' => ['autoresize'],
+                'autoresize_overflow_padding' => 10,
+                'autoresize_bottom_margin' => 0,
+            ]);
 
         } elseif ($this->mode == 'subscribe') {
             $clientOptions = ArrayHelper::merge($baseOptions, [
@@ -181,11 +188,7 @@ editor.addButton("emoji", {
         }
         $view->registerJs('tinymce.init(' . Json::encode($this->clientOptions) . ');');
 
-        $view->registerCss('
-div.mce-fullscreen {
-    z-index: 1100;
-}
-        ');
+        $view->registerCss('div.mce-fullscreen { z-index: 1100; }');
 
         if ($this->useElFinder) {
             $view->registerJs('

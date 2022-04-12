@@ -2,7 +2,7 @@
 
 TinyMce widget for Yii framework.
 
-This widget depend on TinyMCE WYSIWYG editor: https://www.tinymce.com/
+This widget depends on TinyMCE WYSIWYG editor: https://www.tinymce.com/
 
 ## Install
 
@@ -14,12 +14,9 @@ This widget depend on TinyMCE WYSIWYG editor: https://www.tinymce.com/
 <?= TinyMce::widget([
     'language' => Yii::$app->language,
     'clientOptions' => [
+        // https://www.tinymce.com/docs/configure
         ...
     ],
-    'compactMode' => false,
+    'mode' => 'full', // none, compact, basic, full, subscribe
 ]) ?>
 ```
-
-## Client options
-
-https://www.tinymce.com/docs/configure/
