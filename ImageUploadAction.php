@@ -46,6 +46,10 @@ class ImageUploadAction extends Action
      */
     public function run()
     {
+        if (!Yii::$app->request->isPost) {
+            throw new BadRequestHttpException('Invalid request method.');
+        }
+
         Yii::$app->response->format = Response::FORMAT_RAW;
 
         foreach ($_FILES as $uploadFile) {

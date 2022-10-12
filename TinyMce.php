@@ -33,6 +33,14 @@ class TinyMce extends InputWidget
      * @var bool
      */
     public $useElFinder = true;
+    /**
+     * @var string
+     */
+    public $baseUrl;
+    /**
+     * @var string
+     */
+    public $assetBaseUrl;
 
     /**
      * {@inheritdoc}
@@ -47,13 +55,16 @@ class TinyMce extends InputWidget
         $this->language = $this->language ?? mb_substr(Yii::$app->language, 0, 2);
         $this->language = $this->language != 'en_US' ? $this->language : null;
 
-        $baseUrl = $this->getBaseUrl();
+        $this->baseUrl = $this->baseUrl ?? (Yii::$app->has('urlManagerFrontend') ? Yii::$app->urlManagerFrontend->hostInfo : Yii::$app->urlManager->hostInfo);
+
         $assetBundle = TinyMceAsset::register($this->getView());
-        $templatePath = $baseUrl . $assetBundle->baseUrl . '/templates';
+        $this->assetBaseUrl = $this->assetBaseUrl ?? $this->baseUrl . $assetBundle->baseUrl;
+
+        $templatePath = $this->assetBaseUrl . '/templates';
 
         $baseOptions = [
-            'content_css' => $baseUrl . '/css/site-editor.css',
-            'document_base_url' => $baseUrl . '/',
+            'content_css' => $this->baseUrl . '/css/site-editor.css',
+            'document_base_url' => $this->baseUrl . '/',
             'valid_elements' => '*[*]',
             'convert_urls' => false,
             'browser_spellcheck' => true,
@@ -61,24 +72,18 @@ class TinyMce extends InputWidget
             'images_upload_credentials' => true,
             'automatic_uploads' => true,
             'paste_data_images' => true,
+            'autosave_restore_when_empty' => true,
             'branding' => false,
             'height' => 450,
             'fontsize_formats' => '8px 9px 10px 11px 12px 14px 18px 24px 30px 36px 48px 60px 72px 96px',
-            'setup' => new JsExpression('function(editor){ 
-editor.on("change", function(){ tinymce.triggerSave(); });
-editor.ui.registry.addButton("emoji", {
-    icon: "emoji",
-    tooltip: "Emoji",
-    onAction: function () { window.open("//emojio.ru", "_blank"); },
-});
-}'),
+            'setup' => new JsExpression('(editor) => editor.on("change", () => tinymce.triggerSave())'),
             'plugins' => [
                 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
                 'searchreplace wordcount visualblocks visualchars code fullscreen',
                 'insertdatetime media nonbreaking save table directionality',
-                'template paste textpattern'
+                'template paste textpattern emoticons autosave'
             ],
-            'toolbar' => 'fullscreen | insertfile undo redo | styleselect | fontselect | fontsizeselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor | emoji',
+            'toolbar' => 'styleselect | fontselect | fontsizeselect | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | emoticons | fullscreen',
             'image_advtab' => true,
         ];
 
@@ -104,7 +109,7 @@ editor.ui.registry.addButton("emoji", {
 
         } elseif ($this->mode == 'basic') {
             $clientOptions = ArrayHelper::merge($baseOptions, [
-                'toolbar' => 'fullscreen | insertfile undo redo | fontsizeselect | bold italic | bullist numlist | forecolor backcolor | emoji',
+                'toolbar' => 'fontsizeselect | bold italic | forecolor backcolor | bullist numlist | emoji | undo redo | fullscreen',
                 'statusbar' => false,
                 'plugins' => ['autoresize'],
                 'autoresize_overflow_padding' => 10,
@@ -159,14 +164,6 @@ editor.ui.registry.addButton("emoji", {
     }
 
     /**
-     * @return string
-     */
-    public function getBaseUrl()
-    {
-        return Yii::$app->has('urlManagerFrontend') ? Yii::$app->urlManagerFrontend->hostInfo : Yii::$app->urlManager->hostInfo;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function run()
@@ -190,9 +187,8 @@ editor.ui.registry.addButton("emoji", {
         $this->clientOptions['selector'] = '#' . $id;
 
         if ($this->language !== null) {
-            $assetBundle = TinyMceAsset::register($view);
             $this->clientOptions['language'] = $this->language;
-            $this->clientOptions['language_url'] = $this->getBaseUrl() . $assetBundle->baseUrl . '/langs/' . $this->language . '.js';
+            $this->clientOptions['language_url'] = $this->assetBaseUrl . '/langs/' . $this->language . '.js';
         }
 
         $view->registerJs('tinymce.init(' . Json::encode($this->clientOptions) . ');');
