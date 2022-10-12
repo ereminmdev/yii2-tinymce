@@ -63,14 +63,14 @@ class TinyMce extends InputWidget
             'automatic_uploads' => true,
             'paste_data_images' => true,
             'branding' => false,
-            'height' => 350,
+            'height' => 450,
             'fontsize_formats' => '8px 9px 10px 11px 12px 14px 18px 24px 30px 36px 48px 60px 72px 96px',
             'setup' => new JsExpression('function(editor){ 
 editor.on("change", function(){ tinymce.triggerSave(); });
-editor.addButton("emoji", {
+editor.ui.registry.addButton("emoji", {
     icon: "emoticons",
     tooltip: "Emoji",
-    onclick: function() { window.open("//emojio.ru", "_blank"); }
+    onAction: function () { window.open("//emojio.ru", "_blank"); },
 });
 }'),
             'plugins' => [
@@ -92,7 +92,7 @@ editor.addButton("emoji", {
 
         } elseif ($this->mode == 'compact') {
             $clientOptions = ArrayHelper::merge($baseOptions, [
-                'height' => 100,
+                'height' => 200,
                 'toolbar' => false,
                 'menubar' => false,
                 'statusbar' => false,
@@ -193,8 +193,8 @@ editor.addButton("emoji", {
         if ($this->useElFinder) {
             $view->registerJs('
 function elFinderBrowser(callback, value, meta) {
-    tinymce.activeEditor.windowManager.open({
-        file: "' . Url::toRoute(['/files/popup']) . '",
+    tinymce.activeEditor.windowManager.openUrl({
+        url: "' . Url::toRoute(['/files/popup']) . '",
         title: "' . Yii::t('app', 'Files') . '",
         width: 900,
         height: 450,
@@ -204,7 +204,7 @@ function elFinderBrowser(callback, value, meta) {
         close_previous : "no"
     }, {
         oninsert: function (file) {
-            var url, reg, info;
+            let url, reg, info;
 
             // URL normalization
             url = file.url;
