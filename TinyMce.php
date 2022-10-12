@@ -45,12 +45,11 @@ class TinyMce extends InputWidget
         $this->options = ArrayHelper::merge($this->options, ['rows' => 6]);
 
         $this->language = $this->language ?? mb_substr(Yii::$app->language, 0, 2);
-        $this->language = $this->language != 'en' ? $this->language : null;
+        $this->language = $this->language != 'en_US' ? $this->language : null;
 
-        $baseUrl = Yii::$app->has('urlManagerFrontend') ? Yii::$app->urlManagerFrontend->baseUrl : Yii::$app->urlManager->baseUrl;
-
+        $baseUrl = $this->getBaseUrl();
         $assetBundle = TinyMceAsset::register($this->getView());
-        $templatePath = $assetBundle->baseUrl . '/templates';
+        $templatePath = $baseUrl . $assetBundle->baseUrl . '/templates';
 
         $baseOptions = [
             'content_css' => $baseUrl . '/css/site-editor.css',
@@ -68,7 +67,7 @@ class TinyMce extends InputWidget
             'setup' => new JsExpression('function(editor){ 
 editor.on("change", function(){ tinymce.triggerSave(); });
 editor.ui.registry.addButton("emoji", {
-    icon: "emoticons",
+    icon: "emoji",
     tooltip: "Emoji",
     onAction: function () { window.open("//emojio.ru", "_blank"); },
 });
@@ -76,8 +75,8 @@ editor.ui.registry.addButton("emoji", {
             'plugins' => [
                 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
                 'searchreplace wordcount visualblocks visualchars code fullscreen',
-                'insertdatetime media nonbreaking save table contextmenu directionality',
-                'template paste textcolor colorpicker textpattern'
+                'insertdatetime media nonbreaking save table directionality',
+                'template paste textpattern'
             ],
             'toolbar' => 'fullscreen | insertfile undo redo | styleselect | fontselect | fontsizeselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor | emoji',
             'image_advtab' => true,
@@ -125,38 +124,46 @@ editor.ui.registry.addButton("emoji", {
         } else {
             $clientOptions = ArrayHelper::merge($baseOptions, [
                 'templates' => [
-                    ['title' => 'Заголовок первого уровня', 'url' => $templatePath . '/head1.htm'],
+                    ['title' => 'Заголовок первого уровня', 'description' => '', 'url' => $templatePath . '/head1.htm'],
 
-                    ['title' => 'Таблица', 'url' => $templatePath . '/table1.htm'],
-                    ['title' => 'Таблица c чередование строк', 'url' => $templatePath . '/table2.htm'],
-                    ['title' => 'Таблица c рамками', 'url' => $templatePath . '/table3.htm'],
-                    ['title' => 'Таблица компактная', 'url' => $templatePath . '/table4.htm'],
+                    ['title' => 'Таблица', 'description' => '', 'url' => $templatePath . '/table1.htm'],
+                    ['title' => 'Таблица c чередование строк', 'description' => '', 'url' => $templatePath . '/table2.htm'],
+                    ['title' => 'Таблица c рамками', 'description' => '', 'url' => $templatePath . '/table3.htm'],
+                    ['title' => 'Таблица компактная', 'description' => '', 'url' => $templatePath . '/table4.htm'],
 
-                    ['title' => 'Фото или видео по центру', 'url' => $templatePath . '/tpl1.htm'],
-                    ['title' => '2 колонки с заголовком первого уровня', 'url' => $templatePath . '/tpl2.htm'],
-                    ['title' => '3 колонки с заголовком первого уровня', 'url' => $templatePath . '/tpl3.htm'],
-                    ['title' => '4 колонки с заголовком первого уровня', 'url' => $templatePath . '/tpl4.htm'],
-                    ['title' => 'Фото с текстом справа', 'url' => $templatePath . '/tpl5.htm'],
-                    ['title' => 'Фото с текстом слева', 'url' => $templatePath . '/tpl6.htm'],
-                    ['title' => '2 колонки с горизонтальными блоками', 'url' => $templatePath . '/tpl7.htm'],
+                    ['title' => 'Фото или видео по центру', 'description' => '', 'url' => $templatePath . '/tpl1.htm'],
+                    ['title' => '2 колонки с заголовком первого уровня', 'description' => '', 'url' => $templatePath . '/tpl2.htm'],
+                    ['title' => '3 колонки с заголовком первого уровня', 'description' => '', 'url' => $templatePath . '/tpl3.htm'],
+                    ['title' => '4 колонки с заголовком первого уровня', 'description' => '', 'url' => $templatePath . '/tpl4.htm'],
+                    ['title' => 'Фото с текстом справа', 'description' => '', 'url' => $templatePath . '/tpl5.htm'],
+                    ['title' => 'Фото с текстом слева', 'description' => '', 'url' => $templatePath . '/tpl6.htm'],
+                    ['title' => '2 колонки с горизонтальными блоками', 'description' => '', 'url' => $templatePath . '/tpl7.htm'],
 
-                    ['title' => 'Текст 2 колонки', 'url' => $templatePath . '/text2col.htm'],
-                    ['title' => 'Текст 3 колонки', 'url' => $templatePath . '/text3col.htm'],
-                    ['title' => 'Текст 4 колонки', 'url' => $templatePath . '/text4col.htm'],
-                    ['title' => 'Подкат', 'url' => $templatePath . '/tackle.htm'],
+                    ['title' => 'Текст 2 колонки', 'description' => '', 'url' => $templatePath . '/text2col.htm'],
+                    ['title' => 'Текст 3 колонки', 'description' => '', 'url' => $templatePath . '/text3col.htm'],
+                    ['title' => 'Текст 4 колонки', 'description' => '', 'url' => $templatePath . '/text4col.htm'],
+                    ['title' => 'Подкат', 'description' => '', 'url' => $templatePath . '/tackle.htm'],
 
-                    ['title' => 'Кнопка 1', 'content' => '<a class="btn btn-default" href="#" role="button">Подробнее &raquo;</a>'],
-                    ['title' => 'Кнопка 2', 'content' => '<a class="btn btn-primary" href="#" role="button">Подробнее &raquo;</a>'],
-                    ['title' => 'Кнопка 3', 'content' => '<a class="btn btn-success" href="#" role="button">Подробнее &raquo;</a>'],
-                    ['title' => 'Кнопка 4', 'content' => '<a class="btn btn-info" href="#" role="button">Подробнее &raquo;</a>'],
-                    ['title' => 'Кнопка 5', 'content' => '<a class="btn btn-warning" href="#" role="button">Подробнее &raquo;</a>'],
-                    ['title' => 'Кнопка 6', 'content' => '<a class="btn btn-danger" href="#" role="button">Подробнее &raquo;</a>'],
-                    ['title' => 'Кнопка 7', 'content' => '<a class="btn btn-link" href="#" role="button">Подробнее &raquo;</a>'],
+                    ['title' => 'Кнопка 1', 'description' => '', 'content' => '<a class="btn btn-default" href="#" role="button">Подробнее &raquo;</a>'],
+                    ['title' => 'Кнопка 2', 'description' => '', 'content' => '<a class="btn btn-primary" href="#" role="button">Подробнее &raquo;</a>'],
+                    ['title' => 'Кнопка 3', 'description' => '', 'content' => '<a class="btn btn-success" href="#" role="button">Подробнее &raquo;</a>'],
+                    ['title' => 'Кнопка 4', 'description' => '', 'content' => '<a class="btn btn-info" href="#" role="button">Подробнее &raquo;</a>'],
+                    ['title' => 'Кнопка 5', 'description' => '', 'content' => '<a class="btn btn-warning" href="#" role="button">Подробнее &raquo;</a>'],
+                    ['title' => 'Кнопка 6', 'description' => '', 'content' => '<a class="btn btn-danger" href="#" role="button">Подробнее &raquo;</a>'],
+                    ['title' => 'Кнопка 7', 'description' => '', 'content' => '<a class="btn btn-link" href="#" role="button">Подробнее &raquo;</a>'],
                 ],
             ]);
         }
 
         $this->clientOptions = ArrayHelper::merge($clientOptions, $this->clientOptions);
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        return Yii::$app->has('urlManagerFrontend') ? Yii::$app->urlManagerFrontend->hostInfo : Yii::$app->urlManager->hostInfo;
     }
 
     /**
@@ -179,16 +186,16 @@ editor.ui.registry.addButton("emoji", {
     {
         $view = $this->getView();
 
-        $assetBundle = TinyMceAsset::register($view);
-
         $id = $this->options['id'];
         $this->clientOptions['selector'] = '#' . $id;
-        if ($this->language !== null) {
-            $this->clientOptions['language_url'] = $assetBundle->baseUrl . '/langs/' . $this->language . '.js';
-        }
-        $view->registerJs('tinymce.init(' . Json::encode($this->clientOptions) . ');');
 
-        $view->registerCss('div.mce-fullscreen { z-index: 1100; }');
+        if ($this->language !== null) {
+            $assetBundle = TinyMceAsset::register($view);
+            $this->clientOptions['language'] = $this->language;
+            $this->clientOptions['language_url'] = $this->getBaseUrl() . $assetBundle->baseUrl . '/langs/' . $this->language . '.js';
+        }
+
+        $view->registerJs('tinymce.init(' . Json::encode($this->clientOptions) . ');');
 
         if ($this->useElFinder) {
             $view->registerJs('
@@ -201,20 +208,19 @@ function elFinderBrowser(callback, value, meta) {
         resizable: "yes",
         inline : "yes",
         popup_css : false,
-        close_previous : "no"
-    }, {
-        oninsert: function (file) {
-            let url, reg, info;
+        close_previous : "no",
+        onMessage: function (dialogApi, details) {
+            const file = details.data;
 
             // URL normalization
-            url = file.url;
-            reg = /\\/[^/]+?\\/\\.\\.\\//;
+            let url = file.url;
+            const reg = /\\/[^/]+?\\/\\.\\.\\//;
             while(url.match(reg)) {
                 url = url.replace(reg, "/");
             }
 
             // Make file info
-            info = file.name;
+            const info = file.name;
 
             // Provide file and text for the link dialog
             if (meta.filetype == "file") {
@@ -230,6 +236,8 @@ function elFinderBrowser(callback, value, meta) {
             if (meta.filetype == "media") {
                 callback(url);
             }
+
+            dialogApi.close();
         }
     });
     return false;
