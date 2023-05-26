@@ -71,19 +71,18 @@ class TinyMce extends InputWidget
             'images_upload_url' => Url::toRoute(['/files/tinymce-upload'], true),
             'images_upload_credentials' => true,
             'automatic_uploads' => true,
-            'paste_data_images' => true,
             'autosave_restore_when_empty' => true,
             'branding' => false,
             'height' => 450,
             'fontsize_formats' => '8px 9px 10px 11px 12px 14px 18px 24px 30px 36px 48px 60px 72px 96px',
-            'setup' => new JsExpression('(editor) => editor.on("change", () => tinymce.triggerSave())'),
+            'setup' => new JsExpression('editor => editor.on("change", _ => tinymce.activeEditor.uploadImages().then(() => tinymce.triggerSave()))'),
             'plugins' => [
                 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
                 'searchreplace wordcount visualblocks visualchars code fullscreen',
                 'insertdatetime media nonbreaking save table directionality',
-                'template paste textpattern emoticons autosave'
+                'template textpattern emoticons autosave'
             ],
-            'toolbar' => 'styleselect | fontselect | fontsizeselect | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | emoticons | fullscreen',
+            'toolbar' => 'removeformat | styleselect | fontselect | fontsizeselect | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | emoticons | fullscreen',
             'image_advtab' => true,
         ];
 
@@ -102,8 +101,6 @@ class TinyMce extends InputWidget
                 'statusbar' => false,
                 'contextmenu' => false,
                 'resize' => true,
-                'plugins' => ['paste'],
-                'paste_as_text' => true,
             ]);
             $this->options['class'] = '';
 
