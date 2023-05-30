@@ -63,27 +63,26 @@ class TinyMce extends InputWidget
         $templatePath = $this->assetBaseUrl . '/templates';
 
         $baseOptions = [
+            'skin' => 'tinymce-5',
             'content_css' => $this->baseUrl . '/css/site-editor.css',
             'document_base_url' => $this->baseUrl . '/',
-            'valid_elements' => '*[*]',
             'convert_urls' => false,
-            'browser_spellcheck' => true,
             'images_upload_url' => Url::toRoute(['/files/tinymce-upload'], true),
             'images_upload_credentials' => true,
             'automatic_uploads' => true,
-            'autosave_restore_when_empty' => true,
-            'branding' => false,
-            'height' => 450,
-            'fontsize_formats' => '8px 9px 10px 11px 12px 14px 18px 24px 30px 36px 48px 60px 72px 96px',
-            'setup' => new JsExpression('editor => editor.on("change", _ => tinymce.activeEditor.uploadImages().then(() => tinymce.triggerSave()))'),
-            'plugins' => [
-                'advlist autolink lists link image charmap print preview hr anchor pagebreak',
-                'searchreplace wordcount visualblocks visualchars code fullscreen',
-                'insertdatetime media nonbreaking save table directionality',
-                'template textpattern emoticons autosave'
-            ],
-            'toolbar' => 'removeformat | styleselect | fontselect | fontsizeselect | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | emoticons | fullscreen',
+            'autosave_ask_before_unload' => true,
+            'autosave_interval' => '30s',
+            'autosave_prefix' => '{path}{query}-{id}-',
+            'autosave_restore_when_empty' => false,
+            'autosave_retention' => '2m',
+            'browser_spellcheck' => true,
             'image_advtab' => true,
+            'height' => 450,
+            'branding' => false,
+            'promotion' => false,
+            'setup' => new JsExpression('(editor) => editor.on("change", () => tinymce.activeEditor.uploadImages().then(() => tinymce.triggerSave()))'),
+            'plugins' => 'preview importcss searchreplace autolink autosave save code visualblocks visualchars fullscreen image link media template table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount charmap emoticons',
+            'toolbar' => 'removeformat | blocks | fontfamily | fontsize | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | emoticons | fullscreen',
         ];
 
         if ($this->useElFinder) {
@@ -106,7 +105,7 @@ class TinyMce extends InputWidget
 
         } elseif ($this->mode == 'basic') {
             $clientOptions = ArrayHelper::merge($baseOptions, [
-                'toolbar' => 'fontsizeselect | bold italic | forecolor backcolor | bullist numlist | emoji | undo redo | fullscreen',
+                'toolbar' => 'fontsize bold italic forecolor backcolor bullist numlist emoji undo redo fullscreen',
                 'statusbar' => false,
                 'plugins' => ['autoresize'],
                 'autoresize_overflow_padding' => 10,

@@ -15,7 +15,7 @@
   "require": {
     "php": ">=7.0",
     "yiisoft/yii2": "~2.0.1",
-    "tinymce/tinymce": "^5"
+    "tinymce/tinymce": "^6"
   },
   "autoload": {
     "psr-4": {
