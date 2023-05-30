@@ -64,7 +64,7 @@ class ImageUploadAction extends Action
                     throw new BadRequestHttpException('Invalid extension.');
                 }
 
-                $filename = uniqid() . time() . '.' . $extension;
+                $filename = sha1_file($tmp_name) . '.' . $extension;
                 $uploadFolder = $this->uploadFolder;
 
                 if ($this->useSubFolder) {
