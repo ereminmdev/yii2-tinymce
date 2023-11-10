@@ -8,10 +8,12 @@ class TinyMceBaseAsset extends AssetBundle
 {
     public $sourcePath = '@vendor/tinymce/tinymce';
 
-    public function init()
-    {
-        parent::init();
+    public $js = [
+        YII_DEBUG ? 'tinymce.js' : 'tinymce.min.js',
+    ];
 
-        $this->js[] = YII_DEBUG ? 'tinymce.js' : 'tinymce.min.js';
-    }
+    public $publishOptions = [
+        //'except' => ['/composer.json', '/bower.json', '/package.json'],
+        'only' => ['*.js', '*.css'],
+    ];
 }
