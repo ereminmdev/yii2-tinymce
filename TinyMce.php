@@ -60,8 +60,6 @@ class TinyMce extends InputWidget
         $assetBundle = TinyMceAsset::register($this->getView());
         $this->assetBaseUrl = $this->assetBaseUrl ?? $this->baseUrl . $assetBundle->baseUrl;
 
-        $templatePath = $this->assetBaseUrl . '/templates';
-
         $baseOptions = [
             'skin' => 'tinymce-5',
             'content_css' => $this->baseUrl . '/css/site-editor.css',
@@ -81,7 +79,7 @@ class TinyMce extends InputWidget
             'branding' => false,
             'promotion' => false,
             'setup' => new JsExpression('(editor) => editor.on("change", () => tinymce.activeEditor.uploadImages().then(() => tinymce.triggerSave()))'),
-            'plugins' => 'preview importcss searchreplace autolink autosave save code visualblocks visualchars fullscreen image link media template table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount charmap emoticons',
+            'plugins' => 'preview importcss searchreplace autolink autosave save code visualblocks visualchars fullscreen image link media table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount charmap emoticons',
             'toolbar' => 'removeformat | blocks | fontfamily | fontsize | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | emoticons | fullscreen',
         ];
 
@@ -123,37 +121,7 @@ class TinyMce extends InputWidget
             ]);
 
         } else {
-            $clientOptions = ArrayHelper::merge($baseOptions, [
-                'templates' => [
-                    ['title' => 'Заголовок первого уровня', 'description' => '', 'url' => $templatePath . '/head1.htm'],
-
-                    ['title' => 'Таблица', 'description' => '', 'url' => $templatePath . '/table1.htm'],
-                    ['title' => 'Таблица c чередование строк', 'description' => '', 'url' => $templatePath . '/table2.htm'],
-                    ['title' => 'Таблица c рамками', 'description' => '', 'url' => $templatePath . '/table3.htm'],
-                    ['title' => 'Таблица компактная', 'description' => '', 'url' => $templatePath . '/table4.htm'],
-
-                    ['title' => 'Фото или видео по центру', 'description' => '', 'url' => $templatePath . '/tpl1.htm'],
-                    ['title' => '2 колонки с заголовком первого уровня', 'description' => '', 'url' => $templatePath . '/tpl2.htm'],
-                    ['title' => '3 колонки с заголовком первого уровня', 'description' => '', 'url' => $templatePath . '/tpl3.htm'],
-                    ['title' => '4 колонки с заголовком первого уровня', 'description' => '', 'url' => $templatePath . '/tpl4.htm'],
-                    ['title' => 'Фото с текстом справа', 'description' => '', 'url' => $templatePath . '/tpl5.htm'],
-                    ['title' => 'Фото с текстом слева', 'description' => '', 'url' => $templatePath . '/tpl6.htm'],
-                    ['title' => '2 колонки с горизонтальными блоками', 'description' => '', 'url' => $templatePath . '/tpl7.htm'],
-
-                    ['title' => 'Текст 2 колонки', 'description' => '', 'url' => $templatePath . '/text2col.htm'],
-                    ['title' => 'Текст 3 колонки', 'description' => '', 'url' => $templatePath . '/text3col.htm'],
-                    ['title' => 'Текст 4 колонки', 'description' => '', 'url' => $templatePath . '/text4col.htm'],
-                    ['title' => 'Подкат', 'description' => '', 'url' => $templatePath . '/tackle.htm'],
-
-                    ['title' => 'Кнопка 1', 'description' => '', 'content' => '<a class="btn btn-default" href="#" role="button">Подробнее &raquo;</a>'],
-                    ['title' => 'Кнопка 2', 'description' => '', 'content' => '<a class="btn btn-primary" href="#" role="button">Подробнее &raquo;</a>'],
-                    ['title' => 'Кнопка 3', 'description' => '', 'content' => '<a class="btn btn-success" href="#" role="button">Подробнее &raquo;</a>'],
-                    ['title' => 'Кнопка 4', 'description' => '', 'content' => '<a class="btn btn-info" href="#" role="button">Подробнее &raquo;</a>'],
-                    ['title' => 'Кнопка 5', 'description' => '', 'content' => '<a class="btn btn-warning" href="#" role="button">Подробнее &raquo;</a>'],
-                    ['title' => 'Кнопка 6', 'description' => '', 'content' => '<a class="btn btn-danger" href="#" role="button">Подробнее &raquo;</a>'],
-                    ['title' => 'Кнопка 7', 'description' => '', 'content' => '<a class="btn btn-link" href="#" role="button">Подробнее &raquo;</a>'],
-                ],
-            ]);
+            $clientOptions = $baseOptions;
         }
 
         $this->clientOptions = ArrayHelper::merge($clientOptions, $this->clientOptions);
@@ -190,42 +158,44 @@ class TinyMce extends InputWidget
         $view->registerJs('tinymce.init(' . Json::encode($this->clientOptions) . ');');
 
         if ($this->useElFinder) {
-            $view->registerJs('
+            $url = Url::toRoute(['/files/popup']);
+            $title = Yii::t('app', 'Files');
+
+            $view->registerJs(<<<JS
 function elFinderBrowser(callback, value, meta) {
     tinymce.activeEditor.windowManager.openUrl({
-        url: "' . Url::toRoute(['/files/popup']) . '",
-        title: "' . Yii::t('app', 'Files') . '",
+        url: '$url',
+        title: '$title',
         width: 900,
         height: 450,
-        resizable: "yes",
-        inline : "yes",
+        resizable: 'yes',
+        inline : 'yes',
         popup_css : false,
-        close_previous : "no",
+        close_previous : 'no',
         onMessage: function (dialogApi, details) {
             const file = details.data;
 
             // URL normalization
             let url = file.url;
             const reg = /\\/[^/]+?\\/\\.\\.\\//;
+
             while(url.match(reg)) {
-                url = url.replace(reg, "/");
+                url = url.replace(reg, '/');
             }
 
             // Make file info
             const info = file.name;
 
             // Provide file and text for the link dialog
-            if (meta.filetype == "file") {
+            if (meta.filetype === 'file') {
                 callback(url, {text: info, title: info});
             }
-
             // Provide image and alt text for the image dialog
-            if (meta.filetype == "image") {
+            if (meta.filetype === 'image') {
                 callback(url, {alt: info});
             }
-
             // Provide alternative source and posted for the media dialog
-            if (meta.filetype == "media") {
+            if (meta.filetype === 'media') {
                 callback(url);
             }
 
@@ -234,7 +204,8 @@ function elFinderBrowser(callback, value, meta) {
     });
     return false;
 }
-');
+JS
+            );
         }
     }
 }

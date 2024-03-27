@@ -2,7 +2,7 @@
   "name": "ereminmdev/yii2-tinymce",
   "description": "TinyMce widget for Yii framework.",
   "keywords": ["yii2","inputWidget","tinymce"],
-  "homepage": "https://bitbucket.org/ereminmdev/yii2-tinymce",
+  "homepage": "https://github.com/ereminmdev/yii2-tinymce",
   "type": "yii2-extension",
   "license": "MIT",
   "authors": [
@@ -15,7 +15,7 @@
   "require": {
     "php": ">=7.0",
     "yiisoft/yii2": "~2.0.1",
-    "tinymce/tinymce": "^6"
+    "tinymce/tinymce": "^7.0"
   },
   "autoload": {
     "psr-4": {
