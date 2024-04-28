@@ -52,13 +52,13 @@ class TinyMce extends InputWidget
 
         $this->options = ArrayHelper::merge($this->options, ['rows' => 6]);
 
-        $this->language = $this->language ?? mb_substr(Yii::$app->language, 0, 2);
+        $this->language ??= mb_substr(Yii::$app->language, 0, 2);
         $this->language = $this->language != 'en_US' ? $this->language : null;
 
-        $this->baseUrl = $this->baseUrl ?? (Yii::$app->has('urlManagerFrontend') ? Yii::$app->urlManagerFrontend->hostInfo : Yii::$app->urlManager->hostInfo);
+        $this->baseUrl ??= Yii::$app->has('urlManagerFrontend') ? Yii::$app->urlManagerFrontend->hostInfo : Yii::$app->urlManager->hostInfo;
 
         $assetBundle = TinyMceAsset::register($this->getView());
-        $this->assetBaseUrl = $this->assetBaseUrl ?? $this->baseUrl . $assetBundle->baseUrl;
+        $this->assetBaseUrl ??= $this->baseUrl . $assetBundle->baseUrl;
 
         $baseOptions = [
             'skin' => 'tinymce-5',
