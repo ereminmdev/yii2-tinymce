@@ -75,6 +75,7 @@ class TinyMce extends InputWidget
             'autosave_retention' => '2m',
             'browser_spellcheck' => true,
             'image_advtab' => true,
+            'sandbox_iframes' => false,
             'height' => 450,
             'branding' => false,
             'promotion' => false,
