@@ -34,6 +34,10 @@ class TinyMce extends InputWidget
      */
     public $useElFinder = true;
     /**
+     * @var bool
+     */
+    public $useGridPlugin = true;
+    /**
      * @var string
      */
     public $baseUrl;
@@ -87,6 +91,12 @@ class TinyMce extends InputWidget
 
         if ($this->useElFinder) {
             $baseOptions['file_picker_callback'] = new JsExpression('elFinderBrowser');
+        }
+
+        if ($this->useGridPlugin) {
+            $baseOptions['plugins'] .= ' grid';
+            $baseOptions['toolbar'] = 'insertgrid | ' . $baseOptions['toolbar'];
+            $baseOptions['menu'] = ['insert' => ['title' => 'Insert', 'items' => 'image link media addcomment pageembed codesample inserttable insertgrid | math | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime']];
         }
 
         if ($this->mode == 'none') {
