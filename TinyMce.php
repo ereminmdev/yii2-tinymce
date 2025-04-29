@@ -86,7 +86,8 @@ class TinyMce extends InputWidget
             'license_key' => 'gpl',
             'setup' => new JsExpression('(editor) => editor.on("change", () => tinymce.activeEditor.uploadImages().then(() => tinymce.triggerSave()))'),
             'plugins' => 'preview importcss searchreplace autolink autosave save code visualblocks visualchars fullscreen image link media table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount charmap emoticons',
-            'toolbar' => 'removeformat | blocks | fontfamily | fontsize | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | emoticons | fullscreen',
+            'toolbar' => 'removeformat | blocks | fontfamily | fontsize | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | emoticons | code fullscreen',
+            'menubar' => 'file edit insert view format table',
         ];
 
         if ($this->useElFinder) {
@@ -95,8 +96,11 @@ class TinyMce extends InputWidget
 
         if ($this->useGridPlugin) {
             $baseOptions['plugins'] .= ' grid';
-            $baseOptions['toolbar'] = 'insertgrid | ' . $baseOptions['toolbar'];
-            $baseOptions['menu'] = ['insert' => ['title' => 'Insert', 'items' => 'image link media addcomment pageembed codesample inserttable insertgrid | math | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime']];
+            $baseOptions['menubar'] .= ' grid';
+            $baseOptions['menu'] = [
+                'grid' => ['title' => 'Сетка', 'items' => 'insertgrid'],
+                'insert' => ['title' => 'Insert', 'items' => 'image link media addcomment pageembed codesample inserttable grid | math | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime'],
+            ];
         }
 
         if ($this->mode == 'none') {
