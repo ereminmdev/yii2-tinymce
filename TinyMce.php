@@ -34,10 +34,6 @@ class TinyMce extends InputWidget
      */
     public $useElFinder = true;
     /**
-     * @var bool
-     */
-    public $useGridPlugin = true;
-    /**
      * @var string
      */
     public $baseUrl;
@@ -45,6 +41,19 @@ class TinyMce extends InputWidget
      * @var string
      */
     public $assetBaseUrl;
+
+    /**
+     * @var bool
+     */
+    public $useGridPlugin = false;
+    /**
+     * @var bool
+     */
+    public $useAppWidgetPlugin = false;
+    /**
+     * @var bool
+     */
+    public $appWidgetBlocks = [];
 
     /**
      * {@inheritdoc}
@@ -97,10 +106,28 @@ class TinyMce extends InputWidget
         if ($this->useGridPlugin) {
             $baseOptions['plugins'] .= ' grid';
             $baseOptions['menubar'] .= ' grid';
-            $baseOptions['menu'] = [
-                'grid' => ['title' => 'Сетка', 'items' => 'insertgrid'],
-                'insert' => ['title' => 'Insert', 'items' => 'image link media addcomment pageembed codesample inserttable grid | math | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime'],
-            ];
+            $baseOptions['menu']['grid'] = ['title' => 'Сетка', 'items' => 'insertgrid'];
+        }
+
+        if ($this->useAppWidgetPlugin) {
+            $baseOptions['plugins'] .= ' appwidget';
+            $baseOptions['menubar'] .= ' appwidget';
+            $baseOptions['menu']['appwidget'] = ['title' => 'Виджет', 'items' => 'insertappwidget'];
+            //$baseOptions['toolbar'] = 'appwidget ' . $baseOptions['toolbar'];
+            $baseOptions['appwidget_blocks'] = $this->appWidgetBlocks;
+            $baseOptions['content_style'] = ($baseOptions['content_style'] ?? '') . <<<CSS
+.mce-content-body .app-widget {
+    margin: 1px;
+    padding: .5em;
+    color: #333;
+    font-size: .9em;
+    font-family: system-ui;
+    background: #eef;
+    border: 1px solid #00000026;
+    border-radius: .375em;
+    cursor: pointer !important;
+}
+CSS;
         }
 
         if ($this->mode == 'none') {

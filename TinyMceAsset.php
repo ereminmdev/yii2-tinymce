@@ -9,6 +9,7 @@ class TinyMceAsset extends AssetBundle
     public $sourcePath = '@vendor/ereminmdev/yii2-tinymce/assets';
 
     public $js = [
+        'plugins/appwidget/plugin.js',
         'plugins/grid/plugin.js',
     ];
 

@@ -109,7 +109,8 @@ tinymce.PluginManager.add('grid', function (editor, url) {
     });
 
     editor.ui.registry.addButton('insertgrid', {
-        text: 'Сетка',
+        icon: 'table',
+        tooltip: 'Вставить сетку',
         onAction: onAction,
     });
 });
