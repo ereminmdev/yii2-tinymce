@@ -40,10 +40,10 @@ tinymce.PluginManager.add('grid', function (editor, url) {
                                 name: 'justify',
                                 label: 'Горизонтальное выравнивание',
                                 items: [
-                                    {value: 'start', text: 'Слева'},
-                                    {value: 'center', text: 'По центру'},
-                                    {value: 'end', text: 'Справа'},
-                                    {value: 'stretch', text: 'Растянуть'},
+                                    {value: 'start', text: 'слева'},
+                                    {value: 'center', text: 'по центру'},
+                                    {value: 'end', text: 'справа'},
+                                    {value: 'stretch', text: 'растянуть'},
                                 ]
                             },
                             {
@@ -51,10 +51,10 @@ tinymce.PluginManager.add('grid', function (editor, url) {
                                 name: 'align',
                                 label: 'Вертикальное выравнивание',
                                 items: [
-                                    {value: 'start', text: 'Сверху'},
-                                    {value: 'center', text: 'По центру'},
-                                    {value: 'end', text: 'Снизу'},
-                                    {value: 'stretch', text: 'Растянуть'},
+                                    {value: 'start', text: 'сверху'},
+                                    {value: 'center', text: 'по центру'},
+                                    {value: 'end', text: 'снизу'},
+                                    {value: 'stretch', text: 'растянуть'},
                                 ]
                             },
                         ],
