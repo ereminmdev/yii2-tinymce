@@ -6,7 +6,7 @@ tinymce.PluginManager.add('appwidget', function (editor) {
 
     function openWidgetDialog(targetElement = null) {
         const currentCode = targetElement?.textContent || '';
-        const matched = widgets.find(w => w.code === currentCode);
+        const matched = widgets.find(w => w.code === currentCode || w.title === currentCode);
         const initialValue = matched ? matched.code : '';
 
         editor.windowManager.open({
@@ -41,7 +41,7 @@ tinymce.PluginManager.add('appwidget', function (editor) {
                 const selected = widgets.find(w => w.code === data.widget);
                 if (!selected) return;
 
-                const html = `<div class="app-widget mceNonEditable">${selected.code}</div>`;
+                const html = `<div><div class="app-widget mceNonEditable">${selected.title}</div></div>`;
 
                 if (targetElement) {
                     targetElement.outerHTML = html;
@@ -53,6 +53,30 @@ tinymce.PluginManager.add('appwidget', function (editor) {
             }
         });
     }
+
+    function replaceToTitle(editor) {
+        let content = editor.getContent();
+
+        content = content.replaceAll('app-widget mceNonEditable', '');
+
+        const blocks = editor.getParam('appwidget_blocks') || [];
+        blocks.forEach((block) => {
+            content = content.replaceAll(block.code, `<div class="app-widget mceNonEditable">${block.title}</div>`);
+        });
+
+        editor.setContent(content);
+    }
+
+    function replaceToCode(e, editor) {
+        const blocks = editor.getParam('appwidget_blocks') || [];
+        blocks.forEach((block) => {
+            e.content = e.content.replaceAll(`<div class="app-widget mceNonEditable">${block.title}</div>`, block.code);
+        });
+    }
+
+    editor.on('init', () => replaceToTitle(editor));
+    editor.on('change', () => replaceToTitle(editor));
+    editor.on('GetContent', (e) => replaceToCode(e, editor));
 
     editor.on('click', function (e) {
         const el = e.target.closest('.app-widget');
