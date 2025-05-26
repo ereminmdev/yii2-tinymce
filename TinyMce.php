@@ -115,19 +115,6 @@ class TinyMce extends InputWidget
             $baseOptions['menu']['appwidget'] = ['title' => 'Виджет', 'items' => 'insertappwidget'];
             //$baseOptions['toolbar'] = 'appwidget ' . $baseOptions['toolbar'];
             $baseOptions['appwidget_blocks'] = $this->appWidgetBlocks;
-            $baseOptions['content_style'] = ($baseOptions['content_style'] ?? '') . <<<CSS
-.mce-content-body .app-widget {
-    margin: 1px;
-    padding: .5em;
-    color: #333;
-    font-size: .9em;
-    font-family: system-ui;
-    background: #eef;
-    border: 1px solid #00000026;
-    border-radius: .375em;
-    cursor: pointer !important;
-}
-CSS;
         }
 
         if ($this->mode == 'none') {

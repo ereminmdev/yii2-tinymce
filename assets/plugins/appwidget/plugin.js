@@ -4,6 +4,22 @@ tinymce.PluginManager.add('appwidget', function (editor) {
         ...(editor.getParam('appwidget_blocks') || [])
     ];
 
+    editor.on('PreInit', () => {
+        editor.contentStyles.push(`
+.mce-content-body .app-widget {
+    margin: 1px;
+    padding: .5em;
+    color: #333;
+    font-size: .9em;
+    font-family: system-ui;
+    background: #eef;
+    border: 1px solid #00000026;
+    border-radius: .375em;
+    cursor: pointer !important;
+}
+        `);
+    });
+
     function openWidgetDialog(targetElement = null) {
         const currentCode = targetElement?.textContent || '';
         const matched = widgets.find(w => w.code === currentCode || w.title === currentCode);
