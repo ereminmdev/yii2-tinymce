@@ -71,7 +71,8 @@ tinymce.PluginManager.add('appwidget', function (editor) {
     }
 
     function replaceToTitle(editor) {
-        let content = editor.getContent();
+        const oldContent = editor.getContent();
+        let content = oldContent;
 
         content = content.replaceAll('app-widget mceNonEditable', '');
 
@@ -80,7 +81,11 @@ tinymce.PluginManager.add('appwidget', function (editor) {
             content = content.replaceAll(block.code, `<div class="app-widget mceNonEditable">${block.title}</div>`);
         });
 
-        editor.setContent(content);
+        if (content !== oldContent) {
+            const bookmark = editor.selection.getBookmark(2, true);
+            editor.setContent(content);
+            editor.selection.moveToBookmark(bookmark);
+        }
     }
 
     function replaceToCode(e, editor) {
