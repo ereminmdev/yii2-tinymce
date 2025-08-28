@@ -94,7 +94,18 @@ class TinyMce extends InputWidget
             'branding' => false,
             'promotion' => false,
             'license_key' => 'gpl',
-            'setup' => new JsExpression('(editor) => editor.on("change", () => tinymce.activeEditor.uploadImages().then(() => tinymce.triggerSave()))'),
+            'setup' => new JsExpression(<<<JS
+function (editor) {
+    editor.on('change', function () {
+        tinymce.activeEditor.uploadImages().then(() => tinymce.triggerSave());
+    });
+    editor.on('GetContent', function (e) {
+        if (e.content) {
+            e.content = e.content.replace(/<img(?![^>]*loading=)/gi, '<img loading="lazy"');
+        }
+    });
+}
+JS),
             'plugins' => 'preview importcss searchreplace autolink autosave save code visualblocks visualchars fullscreen image link media table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount charmap emoticons',
             'toolbar' => 'removeformat | blocks | fontfamily | fontsize | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | emoticons | code fullscreen',
             'menubar' => 'file edit insert view format table',
