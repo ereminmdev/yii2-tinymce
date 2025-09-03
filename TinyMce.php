@@ -90,6 +90,7 @@ class TinyMce extends InputWidget
             'image_advtab' => true,
             'sandbox_iframes' => false,
             'pagebreak_separator' => '<div style="page-break-before:always"><!-- pagebreak --></div>',
+            'pagebreak_split_block' => true,
             'height' => 450,
             'branding' => false,
             'promotion' => false,
@@ -105,7 +106,8 @@ function (editor) {
         }
     });
 }
-JS),
+JS
+            ),
             'plugins' => 'preview importcss searchreplace autolink autosave save code visualblocks visualchars fullscreen image link media table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount charmap emoticons',
             'toolbar' => 'removeformat | blocks | fontfamily | fontsize | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | emoticons | code fullscreen',
             'menubar' => 'file edit insert view format table',
