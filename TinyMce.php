@@ -89,7 +89,7 @@ class TinyMce extends InputWidget
             'browser_spellcheck' => true,
             'image_advtab' => true,
             'sandbox_iframes' => false,
-            'pagebreak_separator' => '<div style="page-break-before:always"><!-- pagebreak --></div>',
+            'pagebreak_separator' => '<div style="break-before:page"><!-- pagebreak --></div>',
             'pagebreak_split_block' => true,
             'height' => 450,
             'branding' => false,
