@@ -77,6 +77,7 @@ class TinyMce extends InputWidget
             'skin' => 'tinymce-5',
             'content_css' => $this->baseUrl . '/css/site-editor.css',
             'document_base_url' => $this->baseUrl . '/',
+            'extended_valid_elements' => 'script[src|async|defer|type|charset]',
             'convert_urls' => false,
             'images_upload_url' => Url::toRoute(['/files/tinymce-upload'], true),
             'images_upload_credentials' => true,
