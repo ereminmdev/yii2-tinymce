@@ -6,7 +6,7 @@ use yii\web\AssetBundle;
 
 class TinyMceBaseAsset extends AssetBundle
 {
-    public $sourcePath = '@vendor/tinymce/tinymce';
+    public $sourcePath = '@npm/tinymce';
 
     public $js = [
         YII_DEBUG ? 'tinymce.js' : 'tinymce.min.js',
